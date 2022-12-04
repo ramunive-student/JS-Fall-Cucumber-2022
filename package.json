@@ -1,0 +1,33 @@
+{
+  "name": "js-fall-cucumber-2022",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ramunive-student/JS-FALL-CUCUMBER-2022.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ramunive-student/JS-FALL-CUCUMBER-2022/issues"
+  },
+  "homepage": "https://github.com/ramunive-student/JS-FALL-CUCUMBER-2022#readme",
+  "dependencies": {
+    "@wdio/cli": "^7.26.0",
+    "chai": "^4.3.7",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "@wdio/allure-reporter": "^7.26.0",
+    "@wdio/cucumber-framework": "^7.26.0",
+    "@wdio/local-runner": "^7.26.0",
+    "chromedriver": "^108.0.0",
+    "wdio-chromedriver-service": "^8.0.0",
+    "wdio-wait-for": "^3.0.1"
+  }
+}
