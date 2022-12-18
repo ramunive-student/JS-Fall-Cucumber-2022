@@ -12,10 +12,22 @@ class Dates {
         return now.format('MMM');
     }
 
+    static getCurrentMonthNameInFull(){
+        const now = moment();
+        return  now.format('MMMM');
+    }
+
     static getCurrentYearInYYYY() {
         const now = moment();
         return now.format('YYYY');
     }
+
+    static getCurrentHour(){
+        const now = moment();
+        return now.format('h');
+    }
+
+    
 
 
 }
