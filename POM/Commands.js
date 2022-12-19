@@ -107,6 +107,31 @@ class Commands {
             return await $(locator).isEnabled();
         }
     
+            /**
+         * Generic function to find if field is displayed
+         * name: isWebElementDisplayed
+         * input: string(locator)
+         */
+        async isWebElementDisplayed(locator) {
+           await $(locator).waitForDisplayed({
+                timeout:120000,
+                timeoutMsg: 'Element is not displayed'
+            });
+            return await (await $(locator)).isDisplayed();
+        }
+    
+        /**
+         * Generic function to find if field is selected
+         * name: isWebElementSelected
+         * input: string(locator)
+         */
+        async isWebElementSelected(locator) {
+           await $(locator).waitForDisplayed({
+                timeout:120000,
+                timeoutMsg: 'Element is not displayed'
+            });
+            return await $(locator).isSelected();
+        }
         /**
          * Generic function to get Text of a WebElement
          * name: getTextOfWebElement
@@ -125,6 +150,16 @@ class Commands {
                 timeoutMsg: 'Element is not displayed'
             });
             return await $(locator).getText();
+        }
+    
+        async getTextFromWebElement(element) {
+            /*
+                2. if found, return Text
+                3. otherwise, wait for 1-second then start from step-1
+    
+                do above flow for 30-seconds
+            */
+            return await element.getText();
         }
     
         /**
@@ -226,6 +261,31 @@ class Commands {
                 }
             }
         }
+
+        /**
+         * Generic function to select partial value from auto-suggestion using getText
+         * name: selectPartialFromAutoSuggestion
+         * input: locator (for all suggestions), userLikeToSelect
+         */
+        async selectPartialFromAutoSuggestion(locator, userLikeToSelect) {
+            await browser.waitUntil(async () => {
+                const totalSuggestions = await $$(locator);
+                return totalSuggestions.length >= 1
+            }, {
+                timeout: 60000,
+                timeoutMsg: 'Number of auto-suggestions are not 1 or more'
+            });
+    
+            const allSuggestions = await $$(locator);
+            for (const suggestion of allSuggestions) {
+                const webText = await suggestion.getText();
+                console.log(`webText -> ${webText}`);
+                if (webText.toLowerCase().includes(userLikeToSelect.toLowerCase())) {
+                    await suggestion.click();
+                    break;
+                }
+            }
+        }
     
         /**
          * Generic function to select date from calendar using getAttribute
@@ -249,6 +309,16 @@ class Commands {
                     break;
                 }
             }
+        }
+    
+        async waitForNewWindow(countBefore) {
+            await browser.waitUntil(async () => {
+                const totalHandles = (await browser.getWindowHandles()).length;
+                return countBefore+1 === totalHandles;
+            }, {
+                timeout: 60000,
+                timeoutMsg: 'Number of windows are not as expected'
+            });
         }
     
     }
