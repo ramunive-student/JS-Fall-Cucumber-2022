@@ -11,6 +11,13 @@ class HomePage {
     goingToTypeLocator = '#destination_form_field';
     autoSuggestionsLocator = '//div[@class="truncate"]//strong';
     listYourPropertyLinkLocator = '//div[text()="List your property"]';
+    travelersSelectionButtonLocator = '//button[@data-stid="open-room-picker"]';
+    numAdultsDecreaseButtonLocator = '(//span[@class="uitk-step-input-button"])[1]';
+    numAdultsDecreaseButtonLocatorParent = '(//span[@class="uitk-step-input-button"])[1]/parent::button';
+    numOfAdultsLocator = '//input[@id="traveler_selector_adult_step_input-0"]';
+    numAdultsIncreaseButtonLocator = '(//span[@class="uitk-step-input-button"])[2]';
+    numAdultsIncreaseButtonLocatorParent = '(//span[@class="uitk-step-input-button"])[2]/parent::button';
+
 
     // Calendar
     calendarOpenLocator = '#date_form_field-btn';
@@ -110,6 +117,49 @@ class HomePage {
         return allDisabledDates.length;
         
     }
+
+    async clickTravelersSelectionButton() {
+        await this.commands.clickWebElement(this.travelersSelectionButtonLocator);   
+    
+    }   
+
+    async clickNumAdultsDecreaseButton() {
+        await this.commands.clickWebElement(this.numAdultsDecreaseButtonLocator);   
+    
+    }
+
+    async isNumAdultsDecreaseButtonEnabled() {
+        return await this.commands.isWebElementEnabled(this.numAdultsDecreaseButtonLocator);   
+    
+    }
+
+    async getNumOfAdults(){
+        return await this.commands.getAttributeWebElement(this.numOfAdultsLocator, "value");
+    }
+
+    async isNumAdultsDecreaseButtonParentEnabled() {
+        return await $(this.numAdultsDecreaseButtonLocatorParent).isEnabled();   // This needs to be a function in commands, but I am running out of time
+    
+    }
+
+    async isNumAdultsIncreaseButtonEnabled() {
+        return await this.commands.isWebElementEnabled(this.numAdultsIncreaseButtonLocator);   
+    
+    }
+
+    async clickNumAdultsIncreaseButton() {
+        await this.commands.clickWebElement(this.numAdultsIncreaseButtonLocator);   
+    
+    }
+
+    async isNumAdultsIncreaseButtonParentEnabled() {
+        return await $(this.numAdultsIncreaseButtonLocatorParent).isEnabled();   // This needs to be a function in commands, but I am running out of time
+    
+    }
+
+
+
+
 
 }
 module.exports = HomePage;
