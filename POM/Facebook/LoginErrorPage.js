@@ -15,4 +15,4 @@ class LoginErrorPage {
 
 
 }
-module.exports = LoginErrorPage
+module.exports = LoginErrorPage;
