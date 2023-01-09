@@ -51,27 +51,27 @@ Given(/^I am on (facebook|hotels|darksky|yahoo|amazon)$/, async function (urlNam
     I type 'X' as username
     I type 'X' as password
 */
-When(/^I type '(.+)' as (username|password)$/, async function (data, field) {
-    switch (field.toLowerCase()) {
-        case 'username':
-            await loginPage.enterLoginEmail(data);
-            break;
-        case 'password':
-            await loginPage.enterLoginPassword(data);
-            break;    
-        default:
-            break;
-    }
-});
+// When(/^I type '(.+)' as (username|password)$/, async function (data, field) {
+//     switch (field.toLowerCase()) {
+//         case 'username':
+//             await loginPage.enterLoginEmail(data);
+//             break;
+//         case 'password':
+//             await loginPage.enterLoginPassword(data);
+//             break;    
+//         default:
+//             break;
+//     }
+// });
 
 
-When(/^I click login button$/, async function () {
-    await loginPage.clickLoginInButton();
-})
+// When(/^I click login button$/, async function () {
+//     await loginPage.clickLoginInButton();
+// })
 
-When(/^I verify error is displayed$/, async function () {
-    expect(await loginErrorPage.isLoginErrorDisplayed(), 'Login error is not displayed').to.be.true;
-});
+// When(/^I verify error is displayed$/, async function () {
+//     expect(await loginErrorPage.isLoginErrorDisplayed(), 'Login error is not displayed').to.be.true;
+// });
 
 // /*
 //     I verify login "A" is enabled

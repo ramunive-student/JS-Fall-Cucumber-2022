@@ -100,7 +100,7 @@ class Commands {
     
                 do above flow for 30-seconds
             */
-           await $(locator).waitForEnabled({
+           await $(locator).waitForDisplayed({
                 timeout:120000,
                 timeoutMsg: 'Element is not enabled'
             });
@@ -159,7 +159,11 @@ class Commands {
     
                 do above flow for 30-seconds
             */
-            return await element.getText();
+                await $(element).waitForDisplayed({
+                    timeout:120000,
+                    timeoutMsg: 'Element is not displayed'
+                });
+            return await $(element).getText();
         }
     
         /**
@@ -204,10 +208,25 @@ class Commands {
         async moveMouseOn(locator) {
             await $(locator).waitForExist({
                 timeout:120000,
-                timeoutMsg: 'Element is not exist'
+                timeoutMsg: 'Element does not exist'
             });
             await $(locator).moveTo();
         }
+
+        /**
+         * Generic function to scroll to any web-Element
+         * name: scrollToWebElement
+         * input: locator
+         */
+        async scrollToWebElement (locator) {
+            await $(locator).waitForExist({
+                timeout:120000,
+                timeoutMsg: 'Element does not exist'
+            });
+            await $(locator).scrollIntoView();
+        }
+
+        
     
         /**
          * Generic function to get window handle
@@ -320,6 +339,34 @@ class Commands {
                 timeoutMsg: 'Number of windows are not as expected'
             });
         }
+
+        async getPageTitle(){
+            return await browser.getTitle();
+        }
+
+        async switchBrowserWindowUsingPageTitle(expectedTitle){
+            const allHandles = await browser.getWindowHandles();
+        
+            let expectedHandle = '';
+ 
+            for (let handle of allHandles){
+        
+                await browser.switchToWindow(handle);
+                await browser.maximizeWindow();
+            
+       
+                let title = await browser.getTitle();
+                if (title.localeCompare(expectedTitle) === 0 ){
+                    expectedHandle = handle;
+                    break;
+            }
+
+            }
+    
+            return expectedHandle;
+        
+        }
+
     
     }
     module.exports = Commands;
