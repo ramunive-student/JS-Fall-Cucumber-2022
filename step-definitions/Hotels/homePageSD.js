@@ -3,11 +3,17 @@ const { expect } = require('chai');
 const { min } = require('moment/moment');
 const FeedBackPage = require('../../POM/Hotels/FeedBackPage');
 const HomePage = require('../../POM/Hotels/HomePage');
+const SignInPage = require('../../POM/Hotels/SignInPage');
+const SignUpPage = require('../../POM/Hotels/SignUpPage');
 const Dates = require('../../Utils/Dates');
+
 
 
 const homePage = new HomePage();
 const feedbackPage = new FeedBackPage();
+const signInPage = new SignInPage();
+const signUpPage = new SignUpPage();
+
 
 //Given (/^I am on facebook$/, async function (){
 //    await browser.url('/');
@@ -16,10 +22,15 @@ const feedbackPage = new FeedBackPage();
 
 When (/^I click on '(.+)' (button|link)$/, async function (buttonType, elementType){
 
+    let expectedHandle = '';
+
     switch(buttonType.toLowerCase()){
         case 'dates':
             await homePage.clickCalendarOpenButton();
             break;
+        case 'search':
+            await homePage.clickSearchBtnLocator();
+            break;    
         case 'get the app':
             await homePage.clickGetTheAppButton();
             break;
@@ -29,14 +40,26 @@ When (/^I click on '(.+)' (button|link)$/, async function (buttonType, elementTy
         case 'travelers done':
             await homePage.clickTravelersDoneButton();
             break;
+        case 'date selector done':
+            await homePage.clickDoneOnCalendar();
+            break;    
         case 'sign in':
-            await homePage.clickSignInButton();
+            await homePage.clickSignInLink();
             break;
+        case 'account sign in':
+            await homePage.clickAccountSignInBtn();
+            break; 
+        case 'sign in form sign in':
+            await signInPage.clickLoginFormSignInBtn();
+            break;
+        case 'sign up':
+            await homePage.clickAccountSignUpLink();
+            break;        
         case 'feedback':
             await homePage.clickFeedbackLink();
 
             //switch browser to new page
-            const expectedHandle = await feedbackPage.switchBrowserToFeedbackPage();
+            expectedHandle = await feedbackPage.switchBrowserToFeedbackPage();
             break;
         case 'feedback submit':
             await feedbackPage.clickFeedbackSubmitBtn();
@@ -52,7 +75,14 @@ When (/^I click on '(.+)' (button|link)$/, async function (buttonType, elementTy
             break;
         case 'language selector guardar':
             await homePage.clickLanguageSelectorGuardarBtn();
-            break;                           
+            break;
+        case 'terms and conditions':
+            await signUpPage.clickTermsAndConditionsLink();
+            break; 
+        case 'privacy statement':
+            // switch browser to hotels.com Create an account page
+            await signUpPage.clickPrivacyStatementLink();
+            break;                                  
         default:
             break;
 
@@ -100,11 +130,32 @@ Then (/^I verify the back button is disabled for the current month$/, async func
 
 Then (/^I verify '(.+)' error message is displayed$/, async function(expectedErrorMsg){
 
+    let actualErrorMsg = '';
+
     switch(expectedErrorMsg.toLowerCase()){
         case 'please enter a valid phone number.':
-            const actualErrorMsg = await homePage.getPhoneNumberErrorMsgText();
+            actualErrorMsg = await homePage.getPhoneNumberErrorMsgText();
             expect(actualErrorMsg, 'Error message is NOT as expected').to.equal(expectedErrorMsg);
-            break;    
+            break;
+        case 'Email and password don\'t match. Please try again.':
+            
+        //because the locator uses the entire displayed text of the error message, can just determine if message is displayed rather than
+        //comparing the expected error message to the actual error message
+        
+        expect(await signInPage.isLoginFormSubmissionErrorMessageDisplayed(), 'Sign in error message is NOT as expected').to.be.true; 
+            break;        
+        case 'enter a valid email.':
+            actualErrorMsg = await signUpPage.getSignUpFormEmailInputErrorMsgText();
+            expect(actualErrorMsg, 'Invalid email error message is NOT as expected').to.equal(expectedErrorMsg);
+            break;
+        case 'first name cannot contain special characters':
+            actualErrorMsg = await signUpPage.getSignUpFormFirstNameInputErrorMsgText();
+            expect(actualErrorMsg, 'Invalid first name error message is NOT as expected').to.equal(expectedErrorMsg);
+            break;
+        case 'last name cannot contain special characters':
+            actualErrorMsg = await signUpPage.getSignUpFormLastNameInputErrorMsgText();
+            expect(actualErrorMsg, 'Invalid last name error message is NOT as expected').to.equal(expectedErrorMsg);
+            break;        
         default:
             break;
 
@@ -113,13 +164,28 @@ Then (/^I verify '(.+)' error message is displayed$/, async function(expectedErr
 
 });
 
-When (/^I enter '(.+)' in '(.+)'$/, async function(phoneNumber, textBox){
+When (/^I enter '(.+)' in '(.+)'$/, async function(dataToEnter, textBox){
 
 
     switch(textBox.toLowerCase()){
         case 'phone number':
-            await homePage.enterPhoneNumberForApp(phoneNumber);
-            break;    
+            await homePage.enterPhoneNumberForApp(dataToEnter);
+            break; 
+        case 'signup email address':
+            await signUpPage.enterTextInSignupFormEmailInput(dataToEnter);
+            break;
+        case 'first name':
+            await signUpPage.enterTextInSignupFormFirstNameInput(dataToEnter);
+            break;
+        case 'last name':
+            await signUpPage.enterTextInSignupFormLastNameInput(dataToEnter);
+            break;
+        case 'signup password':
+            await signUpPage.enterTextInSignupFormPasswordInput(dataToEnter);
+            break;
+        case 'going to':
+            await homePage.enterDestination(dataToEnter);
+            break;            
         default:
             break;
 
@@ -213,6 +279,13 @@ When (/^I select '(Adults|Children)' as '(.+)'$/, async function(personCategory,
 
 });
 
+Then (/^I verify the number of 'Children-age dropdowns' displayed are '(0|1|2|3|4|5|6)'$/, async function(numChildren){
+
+    const isNumChildrenDropdownsDisplayedCorrect = await homePage.areCorrectNumOfChildAgeSelectorDropdownsAreDisplayed(numChildren);
+    expect(isNumChildrenDropdownsDisplayedCorrect, 'Number of child-age dropdowns are NOT the same as the number of children selected').to.be.true;
+
+});
+
 
 
 When (/^I select '(first|second|third|fourth|fifth|sixth)' child age: '(.+)'$/, async function(childOrder, age){
@@ -281,6 +354,68 @@ Then (/^I verify '(Español|English)' is displayed$/, async function (language){
 
 });
 
+When (/^I select '(.+)' from auto-suggestions$/, async function(destination){
+
+     await homePage.selectFromSuggestedDestinations(destination);
+
+});
+
+When (/^I enter '(Check-in|Check-out)' date as '(.+)'$/, async function (actionType, date){
+
+    //date must be formatted as e.g., December 5 2022 -- Can a regular expression be written to restrict format?
+
+    switch(actionType.toLowerCase()){
+        case 'check-in':
+            await homePage.selectCheckInDate(date);
+            break;
+        case 'check-out':
+            await homePage.selectCheckOutDate(date);
+            break;
+        default:
+            break;        
+    }
+
+});
+
+When (/^I click on '(1|2|3|4|5)' stars from Star rating filter$/, async function (numStars){
+
+    await homePage.selectStarRatingFilterBtn(numStars);
+
+});
+
+Then (/^I verify '(Children plus|Children minus)' button is '(enabled|disabled)' for '(0|1|2|3|4|5|6)'$/, async function (buttonType, btnStatus, numChildren){
+
+    let isEnabled = false;
+    numChildren = Number(numChildren);
+    let minNumOfChildren = await homePage.getMinNumOfChildren();
+    let maxNumOfChildren = await homePage.getMaxNumOfChildren();
+
+
+
+    switch(buttonType.toLowerCase()){
+        case 'children plus':
+            isEnabled = await homePage.isNumChildrenIncreaseButtonParentEnabled();
+            if (numChildren >= minNumOfChildren && numChildren < maxNumOfChildren ){
+                expect(isEnabled, 'Children plus button is NOT enabled').to.be.true;
+            }else if (numChildren == maxNumOfChildren){
+                expect(isEnabled, 'Children plus button IS enabled').to.be.false;
+            }
+            break;
+        case 'children minus':
+            isEnabled = await homePage.isNumChildrenDecreaseButtonParentEnabled();
+            if (numChildren > minNumOfChildren && numChildren <= maxNumOfChildren ){
+                expect(isEnabled, 'Children minus button is NOT enabled').to.be.true;
+            }else if (numChildren == minNumOfChildren){
+                expect(isEnabled, 'Children minus button IS enabled').to.be.false;
+            }
+
+            break;
+        default:
+            break;           
+    }
+
+});
+
 
 // When(/^I type '(.+)' in destination$/, async function(destination){
 
@@ -293,13 +428,7 @@ Then (/^I verify '(Español|English)' is displayed$/, async function (language){
 
 // });
 
-// Then(/^I select "(.+)" from auto-suggestions$/, async function(destination){
 
-//     await homePage.selectFromSuggestedDestinations(destination);
-
-//     await browser.pause(7000);
-
-// });
 
 // When (/^I select number of adults in Room 1 as 1$/, async function ( ) {
 
