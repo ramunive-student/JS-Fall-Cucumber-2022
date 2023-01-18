@@ -11,6 +11,11 @@ class HomePage {
     goingToTypeLocator = '#destination_form_field';
     autoSuggestionsLocator = '//div[@class="truncate"]//strong';
     listYourPropertyLinkLocator = '//div[text()="List your property"]';
+    searchBtnLocator = '//button[@id="search_button"]';
+    starRatingBtnLocator_starts = '//label[@aria-label="';
+    starRatingBtnLocator_ends = ' star"]';
+
+    
 
     //Travelers
     travelersSelectionButtonLocator = '//button[@data-stid="open-room-picker"]';
@@ -25,6 +30,8 @@ class HomePage {
     childAgeSelectorLocator_starts = '//select[@id="age-traveler_selector_children_age_selector-0-';
     childAgeSelectorLocator_ends ='"]';
     travelersDoneButtonLocator = '//button[@id="traveler_selector_done_button"]';
+    numChildrenDecreaseParentButtonLocator = '(//span[@class="uitk-step-input-button"])[3]/parent::button';
+    numChildrenIncreaseParentButtonLocator = '(//span[@class="uitk-step-input-button"])[4]/parent::button';
 
     // Hotels.com App
     getTheAppButtonLocator = '//button[@id="submitBtn"]';
@@ -32,8 +39,13 @@ class HomePage {
     phoneNumberErrorMsgLocator = '//div[@id="phoneNumber-error"]';
 
     // Sign in
-    signInButtonLocator = '//button[text()="Sign in"]';
+    signInLinkLocator = '//button[text()="Sign in"]';
     feedbackLinkLocator = '//a[text()="Feedback"]';
+    accountSignInBtnLocator = '//a[@data-stid="link-header-account-signin"]';
+
+    // Sign up
+    accountSignUpLinkLocator = '//a[@data-stid="link-header-account-signup"]';
+    
 
 
 
@@ -43,10 +55,10 @@ class HomePage {
     allDatesLocator_starts = '//button[starts-with(@aria-label, "'
     allDatesLocator_ends = '")]'
 
-    calendarDoneButtonLocator = '//button[text()="Done" and @data-stid]';
+    calendarDoneButtonLocator = '//button[@data-stid="apply-date-picker" and text()="Done"]';
     nextCalendarButtonLocator = '(//button[@data-stid="date-picker-paging"])[2]';
     prevCalendarButtonLocator = '(//button[@data-stid="date-picker-paging"])[1]';
-    leftSideCalendarHeaderLocator = '(//div[@class="uitk-date-picker-month"])[1]//h2';
+    leftSideCalendarHeaderLocator = '(//div[@data-stid="date-picker-month"])[1]/h2';
 
     allDisabledDatesLocator_starts = '//button[starts-with(@aria-label, "';
     allDisabledDatesLocator_ends = '") and @disabled]';
@@ -71,6 +83,14 @@ class HomePage {
 
     async openCalendar() {
         await this.commands.clickWebElement(this.calendarOpenLocator);
+    }
+
+    async selectStarRatingFilterBtn(numStars){
+       
+        let starRatingBtnLocator = this.starRatingBtnLocator_starts + numStars + this.starRatingBtnLocator_ends;
+        await this.commands.clickWebElement(starRatingBtnLocator);
+        await browser.pause(5000);
+
     }
 
     async selectCheckInDate(date) {
@@ -185,6 +205,16 @@ class HomePage {
     
     }
 
+    async isNumChildrenIncreaseButtonEnabled() {
+        return await this.commands.isWebElementEnabled(this.numChildrenIncreaseButtonLocator);   
+    
+    }
+
+    async isNumChildrenDecreaseButtonEnabled() {
+        return await this.commands.isWebElementEnabled(this.numChildrenDecreaseButtonLocator);   
+    
+    }
+
     async getNumOfAdults(){
         return await this.commands.getAttributeWebElement(this.numOfAdultsLocator, "value");
     }
@@ -231,8 +261,15 @@ class HomePage {
     }
 
     async isNumAdultsIncreaseButtonParentEnabled() {
-        return await $(this.numAdultsIncreaseButtonLocatorParent).isEnabled();   // This needs to be a function in commands, but I am running out of time
-    
+        return await this.commands.isWebElementEnabled(this.numAdultsIncreaseButtonLocatorParent);
+    }
+
+    async isNumChildrenDecreaseButtonParentEnabled(){
+        return await this.commands.isWebElementEnabled(this.numChildrenDecreaseParentButtonLocator);
+    }
+
+    async isNumChildrenIncreaseButtonParentEnabled(){
+        return await this.commands.isWebElementEnabled(this.numChildrenIncreaseParentButtonLocator);
     }
 
     async clickCalendarOpenButton() {
@@ -271,6 +308,39 @@ class HomePage {
         
         
     }
+
+    async areCorrectNumOfChildAgeSelectorDropdownsAreDisplayed(numChildren){
+
+        let childAgeSelectorLocator = '';
+        let numChildrenAgeDropDownsDisplayedCounter = 0;
+        let isDisplayed = false;
+        let isCorrectNumberOfDropDownsDisplayed = false;
+        
+        numChildren = Number(numChildren);
+        
+
+        for(let i = 0; i < numChildren; i++){
+
+            childAgeSelectorLocator =  this.childAgeSelectorLocator_starts + i + this.childAgeSelectorLocator_ends;
+
+            isDisplayed = await this.commands.isWebElementDisplayed(childAgeSelectorLocator);
+
+            if(isDisplayed){
+                numChildrenAgeDropDownsDisplayedCounter++;
+            }
+
+        }
+
+        if(numChildrenAgeDropDownsDisplayedCounter === numChildren){
+            isCorrectNumberOfDropDownsDisplayed = true;
+        }
+
+
+
+        return isCorrectNumberOfDropDownsDisplayed;
+
+
+    }
     async clickTravelersDoneButton() {
         await this.commands.clickWebElement(this.travelersDoneButtonLocator);   
     
@@ -279,8 +349,8 @@ class HomePage {
     async getTextFromTravelersSelectionButton (){
         return await this.commands.getTextFromWebElement(this.travelersSelectionButtonLocator);
     }
-    async clickSignInButton() {
-        await this.commands.clickWebElement(this.signInButtonLocator);   
+    async clickSignInLink() {
+        await this.commands.clickWebElement(this.signInLinkLocator);   
     
     }
 
@@ -330,6 +400,18 @@ class HomePage {
 
     async clickLanguageSelectorGuardarBtn(){
         await this.commands.clickWebElement(this.languageSelectorGuardarBtnLocator);
+    }
+
+    async clickAccountSignInBtn(){
+        await this.commands.clickWebElement(this.accountSignInBtnLocator);
+    }
+
+    async clickAccountSignUpLink(){
+        await this.commands.clickWebElement(this.accountSignUpLinkLocator);
+    }
+
+    async clickSearchBtnLocator(){
+        await this.commands.clickWebElement(this.searchBtnLocator);
     }
 
     

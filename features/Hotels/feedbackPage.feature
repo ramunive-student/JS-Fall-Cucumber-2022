@@ -4,9 +4,9 @@ Feature: Hotels feedback page testcases
 Background:
     Given I am on hotels
 
-@TC-25 @Project1
+@TC-25 @hotels-feedback-page @Project1
 Scenario: Verify user can submit feedback after completing the feedback form
-    When I click on 'Sign in' button
+    When I click on 'Sign in' link
     And I click on 'Feedback' link
     And I select a '5' star rating
     And I enter 'Good Job!' in the Page Comments
@@ -16,9 +16,9 @@ Scenario: Verify user can submit feedback after completing the feedback form
     And I click on 'Feedback Submit' button
     Then I verify 'THANK YOU FOR YOUR FEEDBACK.' is displayed for 'feedback header'
 
-@TC-24 @Project1
+@TC-24 @hotels-feedback-page @Project1
 Scenario: Verify error is displayed when user submits the empty feedback from
-    When I click on 'Sign in' button
+    When I click on 'Sign in' link
     And I click on 'Feedback' link
     And I click on 'Feedback Submit' button
     Then I verify 'Please fill in the required information highlighted below.' is displayed for 'feedback submission error message'

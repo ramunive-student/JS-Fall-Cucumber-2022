@@ -104,7 +104,7 @@ class Commands {
                 timeout:120000,
                 timeoutMsg: 'Element is not enabled'
             });
-            return await $(locator).isEnabled();
+            return await (await $(locator)).isEnabled();
         }
     
             /**
@@ -149,7 +149,7 @@ class Commands {
                 timeout:120000,
                 timeoutMsg: 'Element is not displayed'
             });
-            return await $(locator).getText();
+            return await (await $(locator)).getText();
         }
     
         async getTextFromWebElement(element) {
@@ -197,8 +197,26 @@ class Commands {
                 timeoutMsg: 'Element is not displayed'
             });
             const dropdown = await $(locator);
-            dropdown.selectByVisibleText(dataToSelect);
+            await dropdown.selectByVisibleText(dataToSelect);
+            
         }
+
+        /**
+         * Generic function to select data in dropdown (using value)
+         * name: selectDataInDropdownByValue
+         * input: locatorDropdown, valueWantToSelect
+         */
+        async selectDataInDropdownByAttribute(locator, attribute, dataToSelect) {
+            await $(locator).waitForDisplayed({
+                timeout:120000,
+                timeoutMsg: 'Element is not displayed'
+            });
+            const dropdown = await $(locator);
+            await dropdown.selectByAttribute(attribute, dataToSelect);
+            
+        }
+
+        
     
         /**
          * Generic function to move mouse on any web-Element
@@ -367,6 +385,37 @@ class Commands {
         
         }
 
+        async switchBrowserWindowUsingPartialPageTitle(expectedPartialTitle){
+            const allHandles = await browser.getWindowHandles();
+        
+            let expectedHandle = '';
+ 
+            for (let handle of allHandles){
+        
+                await browser.switchToWindow(handle);
+                await browser.maximizeWindow();
+            
+       
+                let title = await browser.getTitle();
+
+                if (title.startsWith(expectedPartialTitle)){
+                    expectedHandle = handle;
+                    break;
+                }
+                
+            }
+    
+            return expectedHandle;
+        
+        }
+
+        async getNumberOfOpenBrowserTabs(){
+
+            const allHandles = await browser.getWindowHandles();
+
+            return allHandles.length;
+            
+        }
     
     }
     module.exports = Commands;
